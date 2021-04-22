@@ -2,6 +2,7 @@ package com.luxlunaris.cfu.backEnd.dataFetcher;
 
 import android.util.Log;
 
+import com.luxlunaris.cfu.backEnd.dataModel.TimeTableManager;
 import com.luxlunaris.cfu.backEnd.fileIO.FileIO;
 
 import java.io.File;
@@ -74,12 +75,10 @@ public class HtmlTableParser {
 	//this project's dedicated directory
 	public static void downloadTimeTables(String mainPage) {
 
-		Log.d("TIMETABLE", "downloading");
-
 		//get all of the links
-		ArrayList<String> timeTableLinks = LinkGetter.getLinksSelect(mainPage, LinkGetter.defaultFilterKeyword);
+		ArrayList<String> timeTableLinks = LinkGetter.getLinksSelect(mainPage, LinkGetter.getLinkFilters());
 		
-		//for each link, save and store the time table.
+		//for each link, download and store the time table.
 		for(String link : timeTableLinks) {
 						
 			//clean the link (get rid of the surrounding Html)
@@ -87,18 +86,28 @@ public class HtmlTableParser {
 			
 			//get the cells of this table
 			ArrayList<String> cellsOfTable = getCellsOfTable(cleanedLink);
-			
-			//make a new file name
-			String fileName = cleanedLink.split("/")[cleanedLink.split("/").length-1];
-			
-			
-			//make a reference to a new file to write the cells to
-			String newTablefilePath = FileIO.timeTablesDir+File.separator+fileName;
-			File newTableFile = new File(newTablefilePath);
-					
-			//write the cells to the file 
-			FileIO.writeToFile(newTableFile, cellsOfTable);
-		
+
+			//convert cells of table list to a string
+			String cellsBuf = "";
+			for(String cell: cellsOfTable){
+				cellsBuf+=cell+"\n";
+			}
+
+			//make a new table name:
+
+			//get the final part after the slashes
+			String tableName = cleanedLink.split("/")[cleanedLink.split("/").length-1];
+
+			//get rid of the extension
+			try{
+				tableName = tableName.split("\\.")[0];
+			}catch (Exception e){
+				e.printStackTrace();
+			}
+
+
+			//save the time table to memory
+			TimeTableManager.makeAndSaveTable(tableName, cellsBuf);
 		}
 	}
 

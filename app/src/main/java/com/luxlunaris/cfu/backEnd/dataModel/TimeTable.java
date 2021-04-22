@@ -217,18 +217,11 @@ public class TimeTable {
 
 		try{
 			File toBeDeleted = new File(FileIO.timeTablesDir+File.separator+name);
-
-			Log.d("TIMETABLE", toBeDeleted.getPath());
-
-
-
-			boolean t = toBeDeleted.delete();
-			Log.d("TIMETABLE", "time table got deleted? "+t);
+			toBeDeleted.delete();
 
 		}catch (Exception e){
 			e.printStackTrace();
 		}
-
 
 	}
 	

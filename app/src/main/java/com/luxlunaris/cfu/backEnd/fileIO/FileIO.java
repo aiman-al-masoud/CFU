@@ -1,5 +1,7 @@
 package com.luxlunaris.cfu.backEnd.fileIO;
 
+import android.util.Log;
+
 import com.luxlunaris.cfu.frontEnd.activities.TablesListActivity;
 
 import java.io.BufferedReader;
@@ -106,25 +108,12 @@ public class FileIO {
 
 	}
 
-	//create file/folder if it doesn't exist
-	public static void createIfInexistant(File file){
-		if(file.exists()){
-			return;
-		}
-
-		if(file.isDirectory()){
-			file.mkdir();
-			return;
-		}
-
-		try {
-			file.createNewFile();
-			FileIO.writeToFile(file, "");
-		} catch (IOException e) {
-			e.printStackTrace();
+	//debug print all time table files
+	public static void printFiles(){
+		for(File file : timeTablesDir.listFiles()){
+			Log.d("TIMETABLES", file.getPath());
 		}
 	}
-	
 	
 	
 	

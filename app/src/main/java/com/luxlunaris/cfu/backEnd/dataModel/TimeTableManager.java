@@ -158,7 +158,7 @@ public class TimeTableManager {
 	}
 	
 	
-	//make a time table and save its cells to storage
+	//make a time table, and save its cells to storage
 	public static TimeTable makeAndSaveTable(String tableName, String cells) {
 		TimeTable timeTable = loadTimeTable(tableName, cells);
 		timeTable.save();
@@ -186,16 +186,6 @@ public class TimeTableManager {
 	}
 
 
-		//find out if a classroom is busy at a given time, and get the
-	//time table that is responsible for that.
-	public static TimeTable isClassroomBusyAt(String classroomID, String timeOfTheDay, String dayOfTheWeek) {
-		for(TimeTable timeTable : listOfTimeTables) {
-			if(timeTable.isClassroomOccupiedAt(classroomID, timeOfTheDay, dayOfTheWeek)) {
-				return timeTable; //it's busy
-			}
-		}
-		return null; //that's good! classroomID ain't busy at this time.
-	}
 	
 
 	//get all of the available time tables

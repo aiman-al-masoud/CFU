@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.PopupMenu;
+import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.luxlunaris.cfu.R;
@@ -48,6 +49,10 @@ public class TablesListActivity extends AppCompatActivity implements YesOrNoProm
         rootDir = getFilesDir();
         //create files if they don't exist yet
         FileIO.createAllFiles();
+
+
+        FileIO.printFiles();
+
 
 
         //set the classrooms FAB's action
@@ -98,6 +103,10 @@ public class TablesListActivity extends AppCompatActivity implements YesOrNoProm
                                 for(ListItemFragment selectedItem : getSelectedItems()){
                                     remove(selectedItem.getTimeTable());
                                 }
+                                break;
+                            case R.id.newUserDefinedTimeTable:
+                                Toast.makeText(TablesListActivity.tablesListActivity, "hi",Toast.LENGTH_LONG).show();
+
                                 break;
 
 

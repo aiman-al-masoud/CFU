@@ -5,4 +5,7 @@
     <item
         android:id="@+id/deleteSelection"
         android:title="delete" />
+    <item
+        android:id="@+id/newUserDefinedTimeTable"
+        android:title="new time table" />
 </menu>
