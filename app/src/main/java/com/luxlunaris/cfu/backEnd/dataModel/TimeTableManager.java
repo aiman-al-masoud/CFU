@@ -1,6 +1,9 @@
 package com.luxlunaris.cfu.backEnd.dataModel;
 
 import com.luxlunaris.cfu.backEnd.fileIO.FileIO;
+import com.luxlunaris.cfu.backEnd.strings.MyStringUtils;
+
+import org.jsoup.internal.StringUtil;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -64,6 +67,21 @@ public class TimeTableManager {
 		}
 		return null;
 	}
+
+	//get time tables whose name contains a bunch of keywords
+	public static ArrayList<TimeTable> getRelevantTables(String keywords){
+		ArrayList<TimeTable> results = new  ArrayList<TimeTable>();
+
+		for(TimeTable timeTable : listOfTimeTables){
+			if(MyStringUtils.containsKeywords(timeTable.getName(), keywords)){
+				results.add(timeTable);
+			}
+		}
+		return results;
+	}
+
+
+
 
 
 	//get all of the busy classrooms (and TimeTables that occupy them) at a given time on a given day

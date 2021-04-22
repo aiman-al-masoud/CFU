@@ -61,7 +61,7 @@ public class SettingsActivity extends AppCompatActivity implements TextEditorFra
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
-            case R.id.aboutAppToolbarButton:
+            case R.id.downloadTablesToolbarButton:
                 TextEditorFragment displayInfo = new TextEditorFragment(this, "no tag");
                 displayInfo.setPredefinedText(getResources().getString(R.string.info_about_app));
                 displayInfo.setEditable(false);

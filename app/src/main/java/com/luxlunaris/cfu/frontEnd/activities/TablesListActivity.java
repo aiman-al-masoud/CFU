@@ -82,20 +82,28 @@ public class TablesListActivity extends AppCompatActivity implements YesOrNoProm
     }
 
     //remove a time table (ie: the corresponding list item) from the display. And delete the TimeTable from memory.
-    public void remove(TimeTable timeTable){
+    public void delete(TimeTable timeTable){
 
+        //remove time table's item from display
+        removeFromDisplay(timeTable);
+        //delete the time table from storage
+        TimeTableManager.deleteTable(timeTable);
 
+    }
+
+    //remove item from display
+    public void removeFromDisplay(TimeTable timeTable){
         //get the list item
         ListItemFragment listItemFragment = itemsOnDisplay.get(timeTable);
         //remove it
         getSupportFragmentManager().beginTransaction().remove(listItemFragment).commit();
         //remove it from list
         itemsOnDisplay.remove(timeTable);
-        //delete the time table from storage
-        TimeTableManager.deleteTable(timeTable);
-
-
     }
+
+
+
+
 
     //add all of the available time tables
     public void addAll(){
@@ -116,6 +124,35 @@ public class TablesListActivity extends AppCompatActivity implements YesOrNoProm
             }
         }
         return selectedItems;
+    }
+
+
+    //remove irrelevant time tables
+    public void removeIrrelevantTables(ArrayList<TimeTable> relevantTables){
+
+        //get all of the tables on display
+        ArrayList<TimeTable> timeTablesOnDisplay = new ArrayList<TimeTable>(itemsOnDisplay.keySet());
+
+        //for each table on display...
+        for(TimeTable timeTable : timeTablesOnDisplay){
+
+            //check if it's relevant...
+            boolean relevant = false;
+            for(TimeTable relevantTable : relevantTables){
+
+                if(relevantTable.getName().equals(timeTable.getName())){
+                    relevant = true;
+                    break;
+                }
+            }
+
+            //if it's not, remove it from display
+            if(!relevant){
+                removeFromDisplay(timeTable);
+            }
+
+        }
+
     }
 
 
@@ -142,6 +179,11 @@ public class TablesListActivity extends AppCompatActivity implements YesOrNoProm
                 TimeTable timeTable = TimeTableManager.makeAndSaveTable(text.split("\n")[0], text);
                 add(timeTable);
                 break;
+            case "SEARCH_FOR_TABLES":
+                ArrayList<TimeTable> relevantTables = TimeTableManager.getRelevantTables(text);
+                removeIrrelevantTables(relevantTables);
+                break;
+
 
         }
 
@@ -172,12 +214,12 @@ public class TablesListActivity extends AppCompatActivity implements YesOrNoProm
                         switch (item.getItemId()){
                             case R.id.deleteSelection:
                                 for(ListItemFragment selectedItem : getSelectedItems()){
-                                    remove(selectedItem.getTimeTable());
+                                    delete(selectedItem.getTimeTable());
                                 }
                                 break;
                             case R.id.newUserDefinedTimeTable:
                                 TextEditorFragment textEditorFrag = new TextEditorFragment(TablesListActivity.this, "CREATE_NEW_TABLE");
-                                textEditorFrag.setPredefinedText("title:my title\n9:30-10:50\nmondaysPeriod\ntuesdaysPeriod\nwednesdaysPeriod\nthursdaysPeriod\nfridaysPeriod\n10:50-12:00\nmondaysPeriod2\ntuesdaysPeriod2\nwednesdaysPeriod2\nthursdaysPeriod2\nfridaysPeriod2");
+                                textEditorFrag.setPredefinedText("title:myTitle\n9:30-10:50\nmondaysPeriod\ntuesdaysPeriod\nwednesdaysPeriod\nthursdaysPeriod\nfridaysPeriod\n10:50-12:00\nmondaysPeriod2\ntuesdaysPeriod2\nwednesdaysPeriod2\nthursdaysPeriod2\nfridaysPeriod2");
                                 textEditorFrag.show(getSupportFragmentManager(), "textEditorFrag create new table");
                                 break;
                         }
@@ -188,10 +230,14 @@ public class TablesListActivity extends AppCompatActivity implements YesOrNoProm
 
                 optionsMenu.show();
                 break;
-            case R.id.aboutAppToolbarButton:
+            case R.id.downloadTablesToolbarButton:
                 //ask user if they reeeeally wanna do this (again)
                 YesOrNoPrompt yesOrNoPrompt = new YesOrNoPrompt("  re-download and\n  re-analyze time tables?", "DOWNLOAD_TABLES", TablesListActivity.tablesListActivity);
                 yesOrNoPrompt.show(getSupportFragmentManager(), "to redownload or not to redownload...");
+                break;
+            case R.id.searchForTablesToolbarButton:
+                TextEditorFragment textEditorFrag = new TextEditorFragment(TablesListActivity.this, "SEARCH_FOR_TABLES");
+                textEditorFrag.show(getSupportFragmentManager(), "textEditorFrag search for tables");
                 break;
 
         }

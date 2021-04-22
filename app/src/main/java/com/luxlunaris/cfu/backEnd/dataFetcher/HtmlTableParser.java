@@ -14,6 +14,7 @@ import java.util.regex.Pattern;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 public class HtmlTableParser {
 
@@ -36,16 +37,42 @@ public class HtmlTableParser {
 			//get ALL of the cells from the table
 			Document doc = Jsoup.connect(webpage).get();
 
+			//get table's title
+			try{
+				Elements elements = doc.select("h1");
+				for(Element element : elements){
+
+
+					String string = element.toString();
+					Log.d("HEADER",string);
+
+
+					Pattern pattern = Pattern.compile(">(.*?)<");
+					Matcher matcher = pattern.matcher(string);
+					matcher.find();
+					string = matcher.group(1);
+					string = string.replace("&nbsp;","-");
+					string = string.replace("'","");
+
+					Log.d("HEADER",string);
+                    //add it as the title
+					results.add("title:"+string);
+
+				}
+
+			}catch (Exception e){
+				e.printStackTrace();
+			}
+
+
+
 
 			//for each cell...
 			for(Element cell : doc.select("td")) {
 
-
 				//turn cell Element into a string
 				String cellString = cell.toString();
 
-
-				
 				//get the text content (non-html stuff)
 				Pattern pattern = Pattern.compile("\">(.*?)</td");
 				Matcher matcher = pattern.matcher(cellString);

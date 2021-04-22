@@ -8,9 +8,12 @@
 
     <Button
         android:id="@+id/button"
-        android:layout_width="369dp"
-        android:layout_height="50dp"
+        android:layout_width="370dp"
+        android:layout_height="80dp"
+        android:capitalize="characters"
         android:text="Button"
+        android:textAllCaps="false"
+        android:textSize="12sp"
         app:backgroundTint="#000000"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

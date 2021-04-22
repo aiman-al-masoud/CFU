@@ -3,7 +3,7 @@
 
 
     <item
-        android:id="@+id/aboutAppToolbarButton"
+        android:id="@+id/downloadTablesToolbarButton"
         android:icon="@android:drawable/ic_menu_info_details"
         android:title="Item"
         app:showAsAction="always" />

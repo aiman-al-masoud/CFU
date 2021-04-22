@@ -60,7 +60,7 @@ public class TimeTable {
 		for(String cell : cells.split("\n")) {
 
 			//consider this regex a title (table name)
-			if(cell.matches("title:\\w+")){
+			if(cell.matches("title:\\S+")){
 				this.name = cell.replace("title:","");
 				continue; //skip iteration
 			}
