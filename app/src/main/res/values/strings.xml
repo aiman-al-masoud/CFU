@@ -1,3 +1,53 @@
 <resources>
     <string name="app_name">CFU</string>
+
+
+    <string name="info_about_app" id="info_about_app">
+
+        Classroom Finder Utility:\n\n
+
+        an android utility meant\n
+        to parse time tables,\n
+        for the purpose of\n
+        extracting valuable information\n
+        on weekly classroom/course\n
+        availability.\n\n
+
+        The app can download and\n
+        parse html tables from\n
+        a user-editable homepage.\n
+        Alternatively, the\n
+        user can make their own\n
+        time-table(s), by editing\n
+        a text file.\n\n
+
+        This is anexperimental\n
+        product, no warranties\n
+        of any kind are offered\n
+        on its functioning.\n
+        I don\'t take any\n
+        responsibility\n
+        for any moral or material\n
+        damage possibly caused\n
+        by its usage.\n\n
+
+        The code is freely\n
+        available on GitHub.\n
+        Please make good use of it,\n
+        and if you plan\n
+        on forking the project,\n
+        make it open-source\n
+        AND freely modifiable\n
+        AND freely redistributable.\n\n
+
+
+
+        LuxLunarisLabs\n
+
+    </string>
+
+
+
+
+
 </resources>

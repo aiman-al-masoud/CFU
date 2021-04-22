@@ -1,24 +1,23 @@
 package com.luxlunaris.cfu.frontEnd.activities;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.PopupMenu;
-import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.luxlunaris.cfu.R;
-import com.luxlunaris.cfu.backEnd.dataFetcher.HtmlTableParser;
-import com.luxlunaris.cfu.backEnd.dataModel.ClassroomManager;
+import com.luxlunaris.cfu.backEnd.dataFetcher.Downloader;
 import com.luxlunaris.cfu.backEnd.dataModel.TimeTable;
 import com.luxlunaris.cfu.backEnd.dataModel.TimeTableManager;
 import com.luxlunaris.cfu.backEnd.fileIO.FileIO;
 import com.luxlunaris.cfu.frontEnd.fragments.ListItemFragment;
-import com.luxlunaris.cfu.frontEnd.fragments.MessageFragment;
+import com.luxlunaris.cfu.frontEnd.fragments.TextEditorFragment;
 import com.luxlunaris.cfu.frontEnd.fragments.YesOrNoPrompt;
 
 import java.io.File;
@@ -27,7 +26,7 @@ import java.util.HashMap;
 
 //this is the main activity, it displays a
 //list of all of the available tables
-public class TablesListActivity extends AppCompatActivity implements YesOrNoPrompt.YesOrNoPromptListener {
+public class TablesListActivity extends AppCompatActivity implements YesOrNoPrompt.YesOrNoPromptListener, TextEditorFragment.TextEditorListener {
 
     //refrence to this Activity
     public static TablesListActivity tablesListActivity;
@@ -50,11 +49,6 @@ public class TablesListActivity extends AppCompatActivity implements YesOrNoProm
         //create files if they don't exist yet
         FileIO.createAllFiles();
 
-
-        FileIO.printFiles();
-
-
-
         //set the classrooms FAB's action
         FloatingActionButton analyzeFAB = findViewById(R.id.analyzeFAB);
         analyzeFAB.setOnClickListener(new View.OnClickListener() {
@@ -65,75 +59,8 @@ public class TablesListActivity extends AppCompatActivity implements YesOrNoProm
             }
         });
 
-        //set the setting's FAB's action
-        FloatingActionButton settingsFAB = findViewById(R.id.settingsFAB);
-        settingsFAB.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //call the classrooms activity
-                startActivity(new Intent(TablesListActivity.tablesListActivity, SettingsActivity.class));
-            }
-        });
-
-        //set the download and analyze fab's action
-        FloatingActionButton downloadAndAnalyzeFAB = findViewById(R.id.downloadAndAnalyzeFAB);
-        downloadAndAnalyzeFAB.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //ask user if they reeeeally wanna do this (again)
-                YesOrNoPrompt yesOrNoPrompt = new YesOrNoPrompt("  re-download and\n  re-analyze time tables?", "DOWNLOAD_TABLES", TablesListActivity.tablesListActivity);
-                yesOrNoPrompt.show(getSupportFragmentManager(), "to redownload or not to redownload...");
-            }
-        });
-
-        //set the options menu fab's action
-        FloatingActionButton optionsMenuFAB = findViewById(R.id.optionsMenuFAB);
-        optionsMenuFAB.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                PopupMenu optionsMenu = new PopupMenu(TablesListActivity.tablesListActivity, optionsMenuFAB);
-                optionsMenu.getMenuInflater().inflate(R.menu.list_item_menu, optionsMenu.getMenu());
-
-                //set menu items' actions
-                optionsMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        switch (item.getItemId()){
-                            case R.id.deleteSelection:
-                                for(ListItemFragment selectedItem : getSelectedItems()){
-                                    remove(selectedItem.getTimeTable());
-                                }
-                                break;
-                            case R.id.newUserDefinedTimeTable:
-                                Toast.makeText(TablesListActivity.tablesListActivity, "hi",Toast.LENGTH_LONG).show();
-
-                                break;
-
-
-                        }
-
-
-                        return true;
-                    }
-                });
-
-
-                optionsMenu.show();
-            }
-        });
-
-
-
-
-
-
-
-
-
         //add all of the available time tables
         addAll();
-
-
     }
 
     //add a table to the screen and to the list of currently displayed items
@@ -199,38 +126,78 @@ public class TablesListActivity extends AppCompatActivity implements YesOrNoProm
         switch (tag){
             case "DOWNLOAD_TABLES":
                 if(yesOrNo){
-                    new AsyncTask(){
-                        @Override
-                        protected Object doInBackground(Object[] objects) {
-                            //download all of the tables from the specified homepage
-                            HtmlTableParser.downloadTimeTables();
-                            //parse all of the downloaded tables for classroomIDs
-                            ClassroomManager.parseAllTablesForClassroomIDs();
-                            //TODO: put a progress bar or something
-
-
-                            return null;
-                        }
-
-                        @Override
-                        protected void onPostExecute(Object o) {
-
-                            startActivity(new Intent(TablesListActivity.tablesListActivity, TablesListActivity.class));
-                            super.onPostExecute(o);
-                            new MessageFragment("done").show(getSupportFragmentManager(), "show message");
-
-                        }
-                    }.execute();
+                    Downloader.downloadAndAnalyze();
                 }
                 break;
-
-
         }
 
 
     }
 
 
+    @Override
+    public void onTextEntered(String text, String tag) {
+        switch (tag){
+            case "CREATE_NEW_TABLE":
+                TimeTable timeTable = TimeTableManager.makeAndSaveTable(text.split("\n")[0], text);
+                add(timeTable);
+                break;
+
+        }
+
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.tool_bar_menu_main, menu);
+        return super.onCreateOptionsMenu(menu);
+
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.goToSettingsToolbarButton:
+                startActivity(new Intent(TablesListActivity.tablesListActivity, SettingsActivity.class));
+                break;
+            case R.id.optionsToolbarButton:
+                PopupMenu optionsMenu = new PopupMenu(TablesListActivity.tablesListActivity, findViewById(R.id.optionsToolbarButton));
+                optionsMenu.getMenuInflater().inflate(R.menu.list_item_menu, optionsMenu.getMenu());
+
+                //set menu items' actions
+                optionsMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        switch (item.getItemId()){
+                            case R.id.deleteSelection:
+                                for(ListItemFragment selectedItem : getSelectedItems()){
+                                    remove(selectedItem.getTimeTable());
+                                }
+                                break;
+                            case R.id.newUserDefinedTimeTable:
+                                TextEditorFragment textEditorFrag = new TextEditorFragment(TablesListActivity.this, "CREATE_NEW_TABLE");
+                                textEditorFrag.setPredefinedText("title:my title\n9:30-10:50\nmondaysPeriod\ntuesdaysPeriod\nwednesdaysPeriod\nthursdaysPeriod\nfridaysPeriod\n10:50-12:00\nmondaysPeriod2\ntuesdaysPeriod2\nwednesdaysPeriod2\nthursdaysPeriod2\nfridaysPeriod2");
+                                textEditorFrag.show(getSupportFragmentManager(), "textEditorFrag create new table");
+                                break;
+                        }
+
+                        return true;
+                    }
+                });
+
+                optionsMenu.show();
+                break;
+            case R.id.aboutAppToolbarButton:
+                //ask user if they reeeeally wanna do this (again)
+                YesOrNoPrompt yesOrNoPrompt = new YesOrNoPrompt("  re-download and\n  re-analyze time tables?", "DOWNLOAD_TABLES", TablesListActivity.tablesListActivity);
+                yesOrNoPrompt.show(getSupportFragmentManager(), "to redownload or not to redownload...");
+                break;
+
+        }
+
+        return true;
+    }
 
 
 

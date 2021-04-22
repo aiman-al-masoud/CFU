@@ -165,8 +165,22 @@ public class TimeTableManager {
 		return timeTable;
 	}
 
-
 	//OVERLOAD
+	//make and save and LOAD table
+	public static TimeTable makeAndSaveTable(String tableName, String cells, boolean load) {
+
+		TimeTable timeTable;
+		if(load){
+			timeTable  = loadTimeTable(tableName, cells);
+		}else{
+			timeTable = makeAndSaveTable(tableName, cells);
+		}
+
+		return timeTable;
+	}
+
+
+		//OVERLOAD
 	//delete a time table given its name
 	public static void deleteTable(String tableName) {		
 		//get the table to be removed

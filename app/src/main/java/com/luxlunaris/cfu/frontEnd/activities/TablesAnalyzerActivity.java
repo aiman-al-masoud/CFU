@@ -68,7 +68,6 @@ public class TablesAnalyzerActivity extends AppCompatActivity {
                 //add a "busy classrooms" title
                 subFragments.add(new MessageFragment("BUSY CLASSROOMS:"));
 
-
                 //get map of busy classroom-to-listOfTimeTables
                 HashMap<String, ArrayList<TimeTable>> classroom_ListOfTables = TimeTableManager.getBusyClassroomsAndTimeTablesAt(time, day);
 

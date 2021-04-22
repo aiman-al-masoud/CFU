@@ -34,7 +34,6 @@
         <activity android:name=".frontEnd.activities.TableViewActivity"></activity>
 
 
-
     </application>
 
 </manifest>

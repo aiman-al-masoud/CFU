@@ -1,0 +1,17 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/aboutAppToolbarButton"
+        android:icon="@android:drawable/stat_sys_download"
+        android:title="Item"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/goToSettingsToolbarButton"
+        android:icon="@android:drawable/ic_menu_manage"
+        android:title=""
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/optionsToolbarButton"
+        android:icon="@android:drawable/ic_menu_more"
+        app:showAsAction="always" />
+</menu>

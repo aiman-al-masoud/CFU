@@ -7,8 +7,8 @@
 
     <EditText
         android:id="@+id/dayOfTheWeekInputField"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="154dp"
+        android:layout_height="45dp"
         android:layout_marginStart="44dp"
         android:layout_marginLeft="44dp"
         android:layout_marginTop="60dp"
@@ -20,56 +20,56 @@
 
     <Button
         android:id="@+id/getFreeClassroomsButton"
-        android:layout_width="121dp"
-        android:layout_height="60dp"
+        android:layout_width="75dp"
+        android:layout_height="104dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginLeft="20dp"
         android:layout_marginTop="8dp"
         android:text="get"
         app:backgroundTint="#000000"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.134"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/dayOfTheWeekInputField" />
+        app:layout_constraintStart_toEndOf="@+id/timeInputField"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
 
-    <Button
-        android:id="@+id/getCourseTimingsButton"
-        android:layout_width="94dp"
-        android:layout_height="50dp"
-        android:layout_marginStart="44dp"
-        android:layout_marginLeft="44dp"
-        android:layout_marginTop="28dp"
-        android:text="get"
-        app:backgroundTint="#000000"
+    <EditText
+        android:id="@+id/courseNameField"
+        android:layout_width="154dp"
+        android:layout_height="46dp"
+        android:layout_marginTop="8dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="informatica"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.171"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/courseNameField" />
+        app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
     <TextView
         android:id="@+id/textView3"
         android:layout_width="251dp"
         android:layout_height="32dp"
-        android:layout_marginTop="88dp"
+        android:layout_marginTop="24dp"
         android:text="Get timings for a given course:"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.293"
+        app:layout_constraintHorizontal_bias="0.281"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/dayOfTheWeekInputField" />
 
-    <EditText
-        android:id="@+id/courseNameField"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:text="informatica"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.233"
-        app:layout_constraintStart_toStartOf="parent"
+    <Button
+        android:id="@+id/getCourseTimingsButton"
+        android:layout_width="77dp"
+        android:layout_height="45dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:text="get"
+        app:backgroundTint="#000000"
+        app:layout_constraintStart_toEndOf="@+id/courseNameField"
         app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
     <EditText
         android:id="@+id/timeInputField"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="156dp"
+        android:layout_height="50dp"
         android:layout_marginStart="44dp"
         android:layout_marginLeft="44dp"
         android:layout_marginTop="104dp"

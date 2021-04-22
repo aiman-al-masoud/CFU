@@ -36,10 +36,15 @@ public class HtmlTableParser {
 			//get ALL of the cells from the table
 			Document doc = Jsoup.connect(webpage).get();
 
+
 			//for each cell...
 			for(Element cell : doc.select("td")) {
+
+
 				//turn cell Element into a string
 				String cellString = cell.toString();
+
+
 				
 				//get the text content (non-html stuff)
 				Pattern pattern = Pattern.compile("\">(.*?)</td");
@@ -59,6 +64,8 @@ public class HtmlTableParser {
 				}
 				
 			}
+
+
 			
 			return results;
 		} catch (IOException e) {
@@ -83,9 +90,12 @@ public class HtmlTableParser {
 						
 			//clean the link (get rid of the surrounding Html)
 			String cleanedLink = LinkGetter.cleanLink(link);
-			
+
+
 			//get the cells of this table
 			ArrayList<String> cellsOfTable = getCellsOfTable(cleanedLink);
+
+
 
 			//convert cells of table list to a string
 			String cellsBuf = "";
@@ -116,8 +126,9 @@ public class HtmlTableParser {
 	public static void downloadTimeTables(){
 		downloadTimeTables(LinkGetter.getHomepage());
 	}
-	
-	
+
+
+
 	
 	
 	

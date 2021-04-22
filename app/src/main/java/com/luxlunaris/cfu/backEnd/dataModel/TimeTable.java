@@ -58,7 +58,13 @@ public class TimeTable {
 		//fill up the list of timebrackets and the list 
 		//of lessons in a week
 		for(String cell : cells.split("\n")) {
-			
+
+			//consider this regex a title (table name)
+			if(cell.matches("title:\\w+")){
+				this.name = cell.replace("title:","");
+				continue; //skip iteration
+			}
+
 			//if this is a time-bracket, it means there's a new period
 			if(cell.matches("\\d+:\\d+-\\d+:\\d+")) {
 				periodTimeBrackets.add(cell);
@@ -197,6 +203,8 @@ public class TimeTable {
 		for(int i = 0; i<getNumPeriods(); i++) {
 			for(int j =0; j<getNumDays(); j++) {
 				String lektion = getLessonAt(i, j);
+
+
 				if(lektion.equals(lesson)) {
 					timings.add(periodTimeBrackets.get(i)+" "+TimeManager.intToDayName(j));
 				}
@@ -209,7 +217,14 @@ public class TimeTable {
 	
 	//save this TimeTable's cells in the timeTables directory of this project
 	public void save() {
-		FileIO.writeToFile(new File(FileIO.timeTablesDir+File.separator+name), cells);
+		File tableFile = new File(FileIO.timeTablesDir+File.separator+name);
+
+		if(tableFile.exists()){
+			return;
+		}
+
+
+		FileIO.writeToFile(tableFile, cells);
 	}
 	
 	//delete this TimeTable's cells file from the timeTables directory
