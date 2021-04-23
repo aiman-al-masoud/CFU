@@ -1,7 +1,7 @@
 # CFU
 Classroom Finder Utility
 
- Classroom Finder Utility:\n\n
+ Classroom Finder Utility:
 
         an android utility meant
         to parse time tables,
