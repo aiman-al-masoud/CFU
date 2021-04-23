@@ -60,5 +60,10 @@ public class MessageFragment extends DialogFragment {
         messageVisibility = View.GONE;
     }
 
+    //reset text during this fragment's lifetime
+    public void resetText(String text){
+        messageBox.setText(text);
+    }
+
 
 }

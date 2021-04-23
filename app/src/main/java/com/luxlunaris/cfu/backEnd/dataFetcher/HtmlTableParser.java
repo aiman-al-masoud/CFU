@@ -1,9 +1,12 @@
 package com.luxlunaris.cfu.backEnd.dataFetcher;
 
+import android.os.AsyncTask;
 import android.util.Log;
 
 import com.luxlunaris.cfu.backEnd.dataModel.TimeTableManager;
 import com.luxlunaris.cfu.backEnd.fileIO.FileIO;
+import com.luxlunaris.cfu.frontEnd.activities.TablesListActivity;
+import com.luxlunaris.cfu.frontEnd.fragments.MessageFragment;
 
 import java.io.File;
 import java.io.IOException;
@@ -107,52 +110,79 @@ public class HtmlTableParser {
 	
 	//download all of the time tables from a mainpage and save them to 
 	//this project's dedicated directory
-	public static void downloadTimeTables(String mainPage) {
+	public static void downloadTimeTables() {
 
-		//get all of the links
-		ArrayList<String> timeTableLinks = LinkGetter.getLinksSelect(mainPage, LinkGetter.getLinkFilters());
-		
-		//for each link, download and store the time table.
-		for(String link : timeTableLinks) {
-						
-			//clean the link (get rid of the surrounding Html)
-			String cleanedLink = LinkGetter.cleanLink(link);
+		new AsyncTask(){
+
+			@Override
+			protected Object doInBackground(Object[] objects) {
+
+				//get homepage
+				String mainPage = LinkGetter.getHomepage();
+
+				//get all of the links
+				ArrayList<String> timeTableLinks = LinkGetter.getLinksSelect(mainPage, LinkGetter.getLinkFilters());
+
+				//for each link, download and store the time table.
+				for(String link :timeTableLinks) {
+
+					//tell UI what link you got to
+					try{
+						publishProgress(link);
+					}catch (Exception e){
+
+					}
 
 
-			//get the cells of this table
-			ArrayList<String> cellsOfTable = getCellsOfTable(cleanedLink);
+					//clean the link (get rid of the surrounding Html)
+					String cleanedLink = LinkGetter.cleanLink(link);
+
+					//get the cells of this table
+					ArrayList<String> cellsOfTable = getCellsOfTable(cleanedLink);
+
+					//convert cells of table list to a string
+					String cellsBuf = "";
+					for (String cell : cellsOfTable) {
+						cellsBuf += cell + "\n";
+					}
+
+					//make a new table name:
+
+					//get the final part after the slashes
+					String tableName = cleanedLink.split("/")[cleanedLink.split("/").length - 1];
+
+					//get rid of the extension
+					try {
+						tableName = tableName.split("\\.")[0];
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 
 
+					//save the time table to memory
+					TimeTableManager.makeAndSaveTable(tableName, cellsBuf);
+				}
 
-			//convert cells of table list to a string
-			String cellsBuf = "";
-			for(String cell: cellsOfTable){
-				cellsBuf+=cell+"\n";
+
+				return null;
 			}
 
-			//make a new table name:
+			@Override
+			protected void onProgressUpdate(Object[] values) {
 
-			//get the final part after the slashes
-			String tableName = cleanedLink.split("/")[cleanedLink.split("/").length-1];
 
-			//get rid of the extension
-			try{
-				tableName = tableName.split("\\.")[0];
-			}catch (Exception e){
-				e.printStackTrace();
+				Log.d("PROGRESS_UPDATE", values[0].toString());
+				TablesListActivity.tablesListActivity.displayMessageDialog("fetching table at: "+values[0].toString());
+				super.onProgressUpdate(values);
 			}
 
 
-			//save the time table to memory
-			TimeTableManager.makeAndSaveTable(tableName, cellsBuf);
-		}
+		}.execute();
+
 	}
 
 
-	//by default download from homepage
-	public static void downloadTimeTables(){
-		downloadTimeTables(LinkGetter.getHomepage());
-	}
+
 
 
 

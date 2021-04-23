@@ -2,6 +2,11 @@
     <string name="app_name">CFU</string>
 
 
+    <string name="analyze_long_press" id="analyze_long_press">
+        analyze tables
+    </string>
+
+
     <string name="info_about_app" id="info_about_app">
 
         Classroom Finder Utility:\n\n

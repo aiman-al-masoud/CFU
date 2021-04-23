@@ -3,20 +3,25 @@ package com.luxlunaris.cfu.frontEnd.activities;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.AsyncQueryHandler;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.PopupMenu;
+import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.luxlunaris.cfu.R;
-import com.luxlunaris.cfu.backEnd.dataFetcher.Downloader;
+import com.luxlunaris.cfu.backEnd.dataFetcher.HtmlTableParser;
+import com.luxlunaris.cfu.backEnd.dataModel.ClassroomManager;
 import com.luxlunaris.cfu.backEnd.dataModel.TimeTable;
 import com.luxlunaris.cfu.backEnd.dataModel.TimeTableManager;
 import com.luxlunaris.cfu.backEnd.fileIO.FileIO;
 import com.luxlunaris.cfu.frontEnd.fragments.ListItemFragment;
+import com.luxlunaris.cfu.frontEnd.fragments.MessageFragment;
 import com.luxlunaris.cfu.frontEnd.fragments.TextEditorFragment;
 import com.luxlunaris.cfu.frontEnd.fragments.YesOrNoPrompt;
 
@@ -37,6 +42,9 @@ public class TablesListActivity extends AppCompatActivity implements YesOrNoProm
     //map of currently displayed items (fragments). Each fragment maps to a TimeTable.
     HashMap<TimeTable, ListItemFragment> itemsOnDisplay = new HashMap<TimeTable, ListItemFragment>();
 
+    //current dialog message
+    MessageFragment dialogMessage = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,7 +57,7 @@ public class TablesListActivity extends AppCompatActivity implements YesOrNoProm
         //create files if they don't exist yet
         FileIO.createAllFiles();
 
-        //set the classrooms FAB's action
+        //set the analyzeTables FAB's action
         FloatingActionButton analyzeFAB = findViewById(R.id.analyzeFAB);
         analyzeFAB.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -58,6 +66,19 @@ public class TablesListActivity extends AppCompatActivity implements YesOrNoProm
                 startActivity(new Intent(TablesListActivity.tablesListActivity, TablesAnalyzerActivity.class));
             }
         });
+
+        //set the analyzeTables FAB's long press action
+        analyzeFAB.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                //display "helpul message" on long click
+                Toast.makeText(TablesListActivity.tablesListActivity, getString(R.string.analyze_long_press),Toast.LENGTH_SHORT).show();
+                return true;
+            }
+        });
+
+
+
 
         //add all of the available time tables
         addAll();
@@ -155,6 +176,16 @@ public class TablesListActivity extends AppCompatActivity implements YesOrNoProm
 
     }
 
+    //display message
+    public void displayMessageDialog(String message){
+        if(dialogMessage==null){
+            dialogMessage = new MessageFragment(message);
+            dialogMessage.show(getSupportFragmentManager(), "update progress");
+        }else{
+            dialogMessage.resetText(message);
+        }
+    }
+
 
 
     //implements the YesOrNoPrompt listener interface
@@ -163,8 +194,27 @@ public class TablesListActivity extends AppCompatActivity implements YesOrNoProm
         switch (tag){
             case "DOWNLOAD_TABLES":
                 if(yesOrNo){
-                    Downloader.downloadAndAnalyze();
+
+                    HtmlTableParser.downloadTimeTables();
+
+                    new AsyncTask(){
+                        @Override
+                        protected Object doInBackground(Object[] objects) {
+                            ClassroomManager.parseAllTablesForClassroomIDs();
+                            return null;
+                        }
+
+                        @Override
+                        protected void onPostExecute(Object o) {
+                            //refresh list
+                            startActivity(new Intent(tablesListActivity, TablesListActivity.class));
+                            super.onPostExecute(o);
+                        }
+                    }.execute();
+
                 }
+
+
                 break;
         }
 
@@ -232,7 +282,7 @@ public class TablesListActivity extends AppCompatActivity implements YesOrNoProm
                 break;
             case R.id.downloadTablesToolbarButton:
                 //ask user if they reeeeally wanna do this (again)
-                YesOrNoPrompt yesOrNoPrompt = new YesOrNoPrompt("  re-download and\n  re-analyze time tables?", "DOWNLOAD_TABLES", TablesListActivity.tablesListActivity);
+                YesOrNoPrompt yesOrNoPrompt = new YesOrNoPrompt(" download and analyze\n time tables?", "DOWNLOAD_TABLES", TablesListActivity.tablesListActivity);
                 yesOrNoPrompt.show(getSupportFragmentManager(), "to redownload or not to redownload...");
                 break;
             case R.id.searchForTablesToolbarButton:
